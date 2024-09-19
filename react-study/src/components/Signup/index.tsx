@@ -25,7 +25,7 @@ const Signup = () => {
   const submit = async () => {
     try {
       const res = await axios.post(
-        "https://api.cher1shrxd.me/auth/signup",
+        "https://gaon.cher1shrxd.me/auth/signup",
         loginData
       );
       if (res) {
