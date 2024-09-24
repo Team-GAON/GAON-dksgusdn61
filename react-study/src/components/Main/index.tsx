@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Board {
   title: string;
@@ -11,7 +11,6 @@ interface Board {
   id: number;
   likesCount: number;
 }
-
 interface User {
   id: number;
   username: string;
@@ -61,6 +60,9 @@ const Main = () => {
       >
         {user ? user.username : "유저가 없습니다."}
       </h1>
+      <Link to="/write">글쓰기</Link>
+      <Link to="/login">로그인</Link>
+      <Link to="/signup">회원가입</Link>
     </div>
   );
 };
