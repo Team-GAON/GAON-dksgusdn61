@@ -1,13 +1,15 @@
-import axios from "axios";
+import axios, { Axios } from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import BoardItem from "../BoardItem";
+import instance from "../../libs/axios/instance";
 
 interface Board {
   title: string;
   detail: string;
   createdAt: string;
   category: string;
-  author: string;
+  author: User;
   id: number;
   likesCount: number;
 }
@@ -18,15 +20,13 @@ interface User {
 }
 
 const Main = () => {
-  const ACCESS_TOKEN = localStorage.getItem("ACCESS_TOKEN");
   const [user, setUser] = useState<User>();
   const navigate = useNavigate();
+  const [boards, setBoards] = useState<Board[]>([]);
 
   const getMe = async () => {
     try {
-      const res = await axios.get("https://gaon.cher1shrxd.me/auth/me", {
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-      });
+      const res = await instance.get("/auth/me");
       if (res) {
         setUser(res.data);
       }
@@ -36,33 +36,40 @@ const Main = () => {
     }
   };
 
+  const getBoard = async () => {
+    try {
+      const res = await axios.get("https://gaon.cher1shrxd.me/boards");
+      if (res) {
+        setBoards(res.data);
+      }
+    } catch {
+      alert("네트워크 에러");
+    }
+  };
+
   useEffect(() => {
     getMe();
+    getBoard();
   }, []);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <h1
-        style={{
-          marginBottom: "30px",
-          fontStyle: "pretendard",
-          fontSize: "1,7rem",
-          fontWeight: "400",
-        }}
-      >
-        {user ? user.username : "유저가 없습니다."}
-      </h1>
+    <div style={{ display: "flex", width: "100vw", flexDirection: "column" }}>
+      <p>{user ? user.username : "유저가 없습니다."}</p>
       <Link to="/write">글쓰기</Link>
-      <Link to="/login">로그인</Link>
-      <Link to="/signup">회원가입</Link>
+      <div style={{ width: "100%", overflowY: "scroll" }}>
+        {boards.map((item: Board) => (
+          <BoardItem
+            title={item.title}
+            author={item.author}
+            createdAt={item.createdAt}
+            id={item.id}
+            detail={item.detail}
+            category={item.category}
+            likesCount={item.likesCount}
+            key={item.id}
+          />
+        ))}
+      </div>
     </div>
   );
 };
