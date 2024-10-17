@@ -21,6 +21,7 @@ interface User {
 const BoardDetail = () => {
   const [board, setBoard] = useState<Board>();
   const params = useParams();
+  const [isLike, setIsLike] = useState<boolean>(false);
 
   const boardReq = async () => {
     try {
@@ -30,6 +31,29 @@ const BoardDetail = () => {
       }
     } catch {
       alert("네트워크 에러");
+    }
+  };
+
+  const getLike = async (id: string) => {
+    const res = await instance.get(`/likes/${id}`);
+    // if (res) {
+    //   setIsLike(res.data);
+    // }
+  };
+
+  const like = async () => {
+    if (params.id) {
+      await instance.post(`/likes/${params.id}`);
+      setIsLike(true);
+      getLike(params.id);
+    }
+  };
+
+  const unLike = async () => {
+    if (params.id) {
+      await instance.delete(`/likes/${params.id}`);
+      setIsLike(false);
+      getLike(params.id);
     }
   };
 
@@ -48,6 +72,13 @@ const BoardDetail = () => {
       <p>{board?.author.username}</p>
       <hr />
       <p>{board?.createdAt}</p>
+      <hr />
+      <button onClick={isLike ? unLike : like}>
+        <img
+          src={isLike ? "/assets/like.svg" : "/assets/unlike.svg"}
+          alt="like"
+        />
+      </button>
     </div>
   );
 };
